@@ -41,8 +41,13 @@ class OrderController {
     @GetMapping("/orders/{id}")
     EntityModel<Order> one(@PathVariable Long id) {
 
-        Order order = orderRepository.findById(id) //
-                .orElseThrow(() -> new OrderNotFoundException(id));
+        Order order = null;
+        try {
+            order = orderRepository.findById(id) //
+                    .orElseThrow(() -> new OrderNotFoundException(id));
+        } catch (OrderNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return assembler.toModel(order);
     }
@@ -57,12 +62,17 @@ class OrderController {
                 .created(linkTo(methodOn(OrderController.class).one(newOrder.getId())).toUri()) //
                 .body(assembler.toModel(newOrder));
     }
-}
-    @DeleteMapping("/orders/{id}/cancel")
-    ResponseEntity<?> cancel(@PathVariable Long id) throws OrderNotFoundException {
 
-        Order order = orderRepository.findById(id) //
-                .orElseThrow(() -> new OrderNotFoundException(id));
+    @DeleteMapping("/orders/{id}/cancel")
+    ResponseEntity<?> cancel(@PathVariable Long id) {
+
+        Order order = null;
+        try {
+            order = orderRepository.findById(id) //
+                    .orElseThrow(() -> new OrderNotFoundException(id));
+        } catch (OrderNotFoundException e) {
+            e.printStackTrace();
+        }
 
         if (order.getStatus() == Status.IN_PROGRESS) {
             order.setStatus(Status.CANCELLED);
@@ -79,11 +89,16 @@ class OrderController {
     @PutMapping("/orders/{id}/complete")
     ResponseEntity<?> complete(@PathVariable Long id) {
 
-        Order order = orderRepository.findById(id) //
-                .orElseThrow(() -> new OrderNotFoundException(id));
+        Order order = null;
+        try {
+            order = orderRepository.findById(id) //
+                    .orElseThrow(() -> new OrderNotFoundException(id));
+        } catch (OrderNotFoundException e) {
+            e.printStackTrace();
+        }
 
         if (order.getStatus() == Status.IN_PROGRESS) {
-            order.setStatus(Status.COMPLETED)s;
+            order.setStatus(Status.COMPLETED);
             return ResponseEntity.ok(assembler.toModel(orderRepository.save(order)));
         }
 

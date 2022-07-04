@@ -1,7 +1,5 @@
 package payroll;
 
-import ch.qos.logback.core.status.Status;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
